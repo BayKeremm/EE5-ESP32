@@ -5,3 +5,7 @@ then find the port esp32 is attached to with 'ls /dev/cu.*' (for macos).\
 then 'idf.py -p THE_PORT_NAME -b BAUD_RATE flash' command will build and flash the code to the esp32.\
 'screen /dev/cu.PORT_NAME BAUD_RATE' command will open the output window of the esp32.\
 BAUD_RATE = 115200.
+
+TODO/
+Connect to wifi on start-up\
+Measurement will be done and sent every minute 
