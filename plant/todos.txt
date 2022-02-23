@@ -1,0 +1,14 @@
+TODOS:
+1. Add the case where wifi disconnects from esp32.
+2. Read values every minute.
+3. HTTP request and queries for GT server
+4. Write a data structure where the tasks of the pins will write data to and another handler task will use this data structure to send data to the database or do some decision making then delete. Possibility: QUEUE API, find out how it works. 
+5. Find out how to create a task for each pin and how would the priorities will be between these tasks.
+6. Find out how the deep sleep works. For power saving purposes.
+7. Find out how to send commands from the android application to the esp32. (Bluetooth, WIFI, ?)
+
+
+Notes:
+    There is going to be 3 or 4 writer tasks and one modifier task(or 2 depending on how to structure it). 
+    This means that synchronization is only necessary between modifiers (if there is only one modifier there is no need for a synchronization mechnism).
+    
