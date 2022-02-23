@@ -12,7 +12,7 @@
 #include "lwip/sys.h"
 
 #define ESP_WIFI_SSID "modem"
-#define ESP_WIFI_PASS "853211kerem"
+#define ESP_WIFI_PASS "somepassword"
 #define ESP_MAX_RETRY 5
 
 #define WIFI_CONNECTED_BIT BIT0
