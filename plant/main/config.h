@@ -9,12 +9,14 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "esp_tls.h"
+#include "esp_http_client.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-#define ESP_WIFI_SSID "keremap"
-#define ESP_WIFI_PASS "vtbm5940"
+#define ESP_WIFI_SSID "modem"
+#define ESP_WIFI_PASS "853211kerem"
 #define ESP_MAX_RETRY 5
 
 #define WIFI_CONNECTED_BIT BIT0

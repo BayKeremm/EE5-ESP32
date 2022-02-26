@@ -5,10 +5,13 @@
 */
 
 #include "wifimanager.h"
+#include "httpmanager.h"
 #include "config.h"
 void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
+void task_database(void * param);
+void task_MQTT(void * param);
 
 
 
@@ -21,6 +24,8 @@ void app_main(void)
 	}
 	ESP_ERROR_CHECK(ret);
 	wifi_init_sta();
+    http_POST_request();
+	//xTaskCreate(task_database,"database_data",2048,NULL,2,NULL);
 	/*
 	xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL);
 	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
@@ -73,9 +78,9 @@ void task_light(void * param){
     go to sleep
 */
 void task_database(void * param){
-    while(1){
+    http_POST_request();
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     
-    }
     vTaskDelete(NULL);
 }
 /* 
