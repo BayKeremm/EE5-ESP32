@@ -36,9 +36,21 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
 }
 
 
-void http_POST_request(void){
+void http_POST_request(char * type, int timestamp, double value){
+    char time[16];
+    char value_s[50];
+    snprintf(value_s, 50, "%f", value);
+    
+    char url[200] ="https://studev.groept.be/api/a21iot15/insert_measurement/";
+
+    strcat(url,type);
+    strcat(url,"/");
+    strcat(url,itoa(timestamp,time,10));
+    strcat(url,"/");
+    strcat(url,value_s);
+    printf("type %s timestamp %d value %f inserted in the database\n",type,timestamp,value);
     esp_http_client_config_t config = {
-        .url = "https://studev.groept.be/api/a21iot15/insert_measurement/Temperature/8888/21",
+        .url =url, 
         .event_handler = _http_event_handler,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
