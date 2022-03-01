@@ -6,7 +6,7 @@ TODOS:
 5. Find out how to create a task for each pin and how would the priorities will be between these tasks.
 6. Find out how the deep sleep works. For power saving purposes.
 [X]7. Find out how to send commands from the android application to the esp32. (Bluetooth, WIFI, ?) --> public MQTT server will be used. If not polling.
-8. Add ADC for sensors
+[X]8. Add ADC for sensors
 
 Notes:
     There is going to be 3 or 4 writer tasks and one modifier task(or 2 depending on how to structure it). 

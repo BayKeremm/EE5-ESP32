@@ -57,9 +57,12 @@ void task_moisture(void * param){
 }
 void task_light(void * param){
     int val;
+    int voltage;
     while(1){
         val = adc1_get_raw(ADC1_CHANNEL_0);
-        printf("The raw value is %d", val);
+        voltage = adc_get_voltage(val);
+        //printf("The raw value is %d\n", val);
+        printf("The voltage value is %d\n", voltage/100);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
