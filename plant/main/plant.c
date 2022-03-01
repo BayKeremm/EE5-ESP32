@@ -9,11 +9,11 @@
 #include "ADCmanager.h"
 #include "httpmanager.h"
 #include "config.h"
+
 void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
 void task_MQTT(void * param);
-
 
 
 void app_main(void)
@@ -34,13 +34,6 @@ void app_main(void)
 
 
     //http_POST_request(ENUM_MOISTURE,9876,14.04);
-	//xTaskCreate(task_database,"database_data",2048,NULL,2,NULL);
-	/*
-	xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_MQTT,"app_communication",2048,NULL,2,NULL);
-    */
 }
 
 void task_temperature(void * param){
@@ -61,7 +54,8 @@ void task_light(void * param){
     while(1){
         val = adc1_get_raw(ADC1_CHANNEL_0);
         voltage = adc_get_voltage(val);
-        //printf("The raw value is %d\n", val);
+        shift_array((void*)light_array);
+        light_array[0] = voltage / 100;
         printf("The voltage value is %d\n", voltage/100);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
