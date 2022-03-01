@@ -1,14 +1,17 @@
 TODOS:
 1. Add the case where wifi disconnects from esp32.
-2. Read values every minute.
+[X]2. Read values every minute.
 [X]3. HTTP request and queries for GT server
-4. Write a data structure where the tasks of the pins will write data to and another handler task will use this data structure to send data to the database or do some decision making then delete. Possibility: QUEUE API, find out how it works. 
-5. Find out how to create a task for each pin and how would the priorities will be between these tasks.
-6. Find out how the deep sleep works. For power saving purposes.
+[]4. Individual stack for each task keeping running avg. (stack can hold any data type, it is implemented as singly linked list), implement the functions
+[]5. Find out how to create a task for each pin and how would the priorities will be between these tasks.
+[]6. Find out how the deep sleep works. For power saving purposes.
 [X]7. Find out how to send commands from the android application to the esp32. (Bluetooth, WIFI, ?) --> public MQTT server will be used. If not polling.
 [X]8. Add ADC for sensors
 
 Notes:
     There is going to be 3 or 4 writer tasks and one modifier task(or 2 depending on how to structure it). 
     This means that synchronization is only necessary between modifiers (if there is only one modifier there is no need for a synchronization mechnism).
+    -- shared data structure will not be used--
+    A stack will be used by each task (individual stack) to hold their running average of x amount of values.
+
     
