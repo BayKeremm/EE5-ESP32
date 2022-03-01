@@ -13,24 +13,26 @@
 #include "nvs_flash.h"
 #include "esp_tls.h"
 #include "esp_http_client.h"
+#include "driver/adc.h"
+#include "esp_adc_cal.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+// Database paramters
 #define ENUM_TEMPERATURE "Temperature"
 #define ENUM_MOISTURE "Moisture"
 #define ENUM_LIGHT "Light"
 
+// wifi paramters
 #define ESP_WIFI_SSID "modem"
 #define ESP_WIFI_PASS "853211kerem"
 #define ESP_MAX_RETRY 5
 
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT BIT1
-/*typedef struct {
-    double value;
-    int time;
-    char * type;
-}datavalues_t;
-*/
+
+// ADC paramters 
+
+
 #endif  //CONFIG
