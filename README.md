@@ -11,6 +11,11 @@ BAUD_RATE = 115200.
 
 Add the following lines to the sdkconfig to do http connection without TLS.\
 CONFIG_ESP_TLS_INSECURE=y\
-CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y
+CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y\
+
+moisture sensor:\
+completely immersed in water --> 1.2V output.
+Air -> 2.5V output.
+
 
 
