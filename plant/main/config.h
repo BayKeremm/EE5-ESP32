@@ -16,6 +16,8 @@
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
 
+#define RUN_AVG_LENGTH 5
+
 #include "lwip/err.h"
 #include "lwip/sys.h"
 

@@ -30,6 +30,7 @@ void app_main(void)
     // init ADC
     adc_init();
 	// LDR 
+	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
 	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 
@@ -43,21 +44,24 @@ void task_temperature(void * param){
     vTaskDelete(NULL);
 }
 void task_moisture(void * param){
+    int val;
+    float moisture;
     while(1){
-    
+        val = adc1_get_raw(ADC1_CHANNEL_0);
+        moisture = adc_get_voltage(val);
+        printf("The moisture percentage is %f\n", 100 - 100 * moisture/(3300));
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
 }
 void task_light(void * param){
     int val;
-    int voltage;
+    float voltage;
     while(1){
-        val = adc1_get_raw(ADC1_CHANNEL_0);
+        val = adc1_get_raw(ADC1_CHANNEL_3);
         voltage = adc_get_voltage(val);
-        shift_array((void*)light_array);
-        light_array[0] = voltage / 100;
-        printf("The voltage value is %d\n", voltage/100);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        printf("(LDR)The voltage value is %f V\n", voltage/1000);
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
 }
