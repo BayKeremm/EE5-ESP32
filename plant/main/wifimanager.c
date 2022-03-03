@@ -84,7 +84,7 @@ void wifi_init_sta(void){
 		ESP_LOGI(TAG,"connected to ap SSID:%s password:%s",ESP_WIFI_SSID,ESP_WIFI_PASS);
 		s_backoff_time = 15;
 	}else if(bits & WIFI_FAIL_BIT){
-		ESP_LOGI(TAG,"Failed to connec to SSID:%s, password:%s",ESP_WIFI_SSID,ESP_WIFI_PASS);
+		ESP_LOGI(TAG,"Failed to connect to SSID:%s, password:%s",ESP_WIFI_SSID,ESP_WIFI_PASS);
         // Backoff from trying to connect then init again and start over.
 		ESP_LOGI(TAG,"Failed to connect to SSID:%s, backing off for %d seconds",ESP_WIFI_SSID,s_backoff_time);
 		for (int i = s_backoff_time; i >= 0; i--) {
@@ -92,7 +92,6 @@ void wifi_init_sta(void){
             vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
 		s_backoff_time *= 2;
-	    wifi_init_sta();
 	}else{
 		ESP_LOGE(TAG,"UNEXPECTED EVENT");
 	}

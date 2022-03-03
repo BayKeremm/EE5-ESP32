@@ -16,6 +16,7 @@ void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
 void task_MQTT(void * param);
+void task_wifi(void * param);
 
 static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
@@ -31,16 +32,26 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
+    bluetooth_init();
+
+
 	// init WIFI
-	//wifi_init_sta();
+	//xTaskCreate(task_wifi,"wifi",2048,NULL,2,NULL);
     // init ADC
-    adc_init();
+    //adc_init();
 	// LDR 
-	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
+	//xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
+	//xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 
     //http_POST_request(ENUM_MOISTURE,9876,14.04);
+}
+void task_wifi(void*param){
+    while(1){
+	    wifi_init_sta();
+    
+    }
+    vTaskDelete(NULL);
 }
 
 void task_temperature(void * param){

@@ -15,6 +15,11 @@
 #include "esp_http_client.h"
 #include "driver/adc.h"
 #include "esp_adc_cal.h"
+#include "esp_bt.h"
+#include "esp_bt_main.h"
+#include "esp_gap_bt_api.h"
+#include "esp_bt_device.h"
+#include "esp_spp_api.h"
 
 #define RUN_AVG_LENGTH 5
 
