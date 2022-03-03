@@ -10,10 +10,16 @@
 #include "httpmanager.h"
 #include "config.h"
 
+float get_array_avg(float *);
+void add_measurement(float *,float);
 void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
 void task_MQTT(void * param);
+
+static float light_array[RUN_AVG_LENGTH];
+static float moisture_array[RUN_AVG_LENGTH];
+//static float temperature_array[RUN_AVG_LENGTH];
 
 
 void app_main(void)
@@ -45,11 +51,14 @@ void task_temperature(void * param){
 }
 void task_moisture(void * param){
     int val;
-    float moisture;
+    float voltage;
     while(1){
         val = adc1_get_raw(ADC1_CHANNEL_0);
-        moisture = adc_get_voltage(val);
-        printf("The moisture percentage is %f\n", 100 - 100 * moisture/(3300));
+        voltage = adc_get_voltage(val);
+        float moisture = 100 - 100 * voltage/(3300);
+        printf("(MOISTURE)The moisture percentage is %f\n",moisture); 
+        add_measurement(moisture_array,moisture); 
+        printf("(MOISTURE)The average is %f V\n", get_array_avg(moisture_array));
         vTaskDelay(3000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
@@ -61,6 +70,8 @@ void task_light(void * param){
         val = adc1_get_raw(ADC1_CHANNEL_3);
         voltage = adc_get_voltage(val);
         printf("(LDR)The voltage value is %f V\n", voltage/1000);
+        add_measurement(light_array,voltage/1000); 
+        printf("(LDR)The average is %f V\n", get_array_avg(light_array));
         vTaskDelay(3000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
@@ -70,4 +81,22 @@ void task_MQTT(void * param){
     
     }
     vTaskDelete(NULL);
+}
+
+
+void add_measurement(float*array,float value){
+   int i;
+   for(i=RUN_AVG_LENGTH-1;i>0;i--){
+        array[i] = array[i-1];
+   }
+   array[0] = value; 
+    return;
+}
+float get_array_avg(float * array){
+    float sum = 0;
+    int i;
+    for(i = 0;i<RUN_AVG_LENGTH;i++){
+        sum+=array[i];
+    }
+    return sum / RUN_AVG_LENGTH;
 }
