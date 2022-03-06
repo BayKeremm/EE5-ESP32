@@ -9,6 +9,7 @@
 #include "ADCmanager.h"
 #include "httpmanager.h"
 #include "config.h"
+#include "bluetoothmanager.h"
 
 float get_array_avg(float *);
 void add_measurement(float *,float);
@@ -32,8 +33,15 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
-    bluetooth_init();
-
+    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_BLE));
+	
+	// init bluetooth
+    //bluetooth_init();
+    adc_init();
+    wifi_init_sta();
+	// LDR 
+	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
+	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 	// init WIFI
 	//xTaskCreate(task_wifi,"wifi",2048,NULL,2,NULL);
