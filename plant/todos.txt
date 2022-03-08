@@ -9,11 +9,13 @@ TODOS:
 [X]8. Add ADC for sensors
 [X]9. SmartConfig to conenct to the wifi without credentials hard coded 
 []10. MQTT subcribe publish manager
+[]11. PWM
 
 Notes:
     -- shared data structure will not be used--
     An array will be used by each task to store their last 5 readings.
     Find out the MQTT broker cheese. 
+
 
 
     
