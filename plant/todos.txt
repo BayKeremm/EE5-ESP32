@@ -16,6 +16,8 @@ Notes:
     An array will be used by each task to store their last 5 readings.
     Find out the MQTT broker cheese. 
 
+CHANGE
+
 
 
     
