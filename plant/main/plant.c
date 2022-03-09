@@ -9,7 +9,10 @@
 #include "ADCmanager.h"
 #include "httpmanager.h"
 #include "config.h"
-#include "bluetoothmanager.h"
+#include "mqttmanager.h"
+extern esp_mqtt_client_handle_t client;
+extern char wifi_connected;
+extern char mqtt_config_finish;
 
 float get_array_avg(float *);
 void add_measurement(float *,float);
@@ -24,6 +27,7 @@ static float moisture_array[RUN_AVG_LENGTH];
 //static float temperature_array[RUN_AVG_LENGTH];
 
 
+
 void app_main(void)
 {
 	// init memory
@@ -33,15 +37,24 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
-    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_BLE));
 	
-	// init bluetooth
-    //bluetooth_init();
-    adc_init();
     wifi_init_sta();
+    
+    
+    while(wifi_connected == 0 || mqtt_config_finish == 0){
+        if(wifi_connected == 1)
+        MQTT_start();
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        printf("waiting for wifi connection and mqtt config\n");
+    }
+    int msg_id = esp_mqtt_client_publish(client, "/EE5iot15/warnings", "This is a message from the app_main task", 0, 1, 1);
+    
+         
+    
+    //adc_init();
 	// LDR 
-	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
+	//xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
+	//xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 	// init WIFI
 	//xTaskCreate(task_wifi,"wifi",2048,NULL,2,NULL);
@@ -97,7 +110,7 @@ void task_light(void * param){
 }
 void task_MQTT(void * param){
     while(1){
-    
+         
     }
     vTaskDelete(NULL);
 }

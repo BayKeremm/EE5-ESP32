@@ -19,13 +19,12 @@
 
 #include "esp_smartconfig.h"
 
-#include "esp_bt.h"
-#include "esp_bt_main.h"
-#include "esp_gap_bt_api.h"
-#include "esp_bt_device.h"
-#include "esp_spp_api.h"
-#include "time.h"
-#include "sys/time.h"
+
+#include "mqtt_client.h"
+#include "lwip/sockets.h"
+#include "lwip/netdb.h"
+
+
 #include "nvs.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -41,13 +40,15 @@
 #define ENUM_LIGHT "Light"
 
 // wifi paramters
-//#define ESP_WIFI_SSID "modem"
-//#define ESP_WIFI_PASS "password" no need with smart config.
+#define ESP_WIFI_SSID "keremap"
+#define ESP_WIFI_PASS "vtbm5940"
 #define ESP_MAX_RETRY 5
 
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT BIT1
 #define ESPTOUCH_DONE_BIT BIT2
+
+#define BROKER_URI "mqtt://52.28.133.146:1883"
 
 // ADC paramters 
 

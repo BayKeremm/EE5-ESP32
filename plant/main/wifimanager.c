@@ -1,9 +1,12 @@
 #include "wifimanager.h"
+#include "mqttmanager.h"
 #include "config.h"
 static EventGroupHandle_t s_wifi_event_group;
 
 static const char * TAG = "wifi station";
 static int s_retry_num = 0;
+char wifi_connected = 0;
+
 
 
 static void smartconfig_task(void * parm);
@@ -81,6 +84,7 @@ static void smartconfig_task(void * parm)
         if(uxBits & ESPTOUCH_DONE_BIT) {
             ESP_LOGI(TAG, "smartconfig over");
             esp_smartconfig_stop();
+            wifi_connected = 1;
             vTaskDelete(NULL);
         }if(uxBits & WIFI_FAIL_BIT){
 			ESP_LOGI(TAG, "smartconfig over failed to connect to wifi");
@@ -108,4 +112,3 @@ void wifi_init_sta(void){
     ESP_ERROR_CHECK( esp_wifi_start() );
 
 }
-
