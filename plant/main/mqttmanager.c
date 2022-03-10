@@ -43,27 +43,15 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
-        char * data = event->data;
-        char * S_10 = "10";
-        char * S_11 = "11";
-        char * S_01 = "01";
-        if (strcmp(event->data,S_01)==0){
-            printf("TURN LIGHT OFF, WATER ON\n");
-
-        }
-        else if (strcmp(event->data,S_10)==0){
-            printf("TURN LIGHT ON, WATER OFF\n");
-
-        }
-        else if (strcmp(event->data,S_11)==0){
-            printf("TURN LIGHT AND WATER ON\n");
-
-        }else{
-            printf("TURN LIGHT AND WATER OFF \n");
-
-        }
+        if(event->data[0] == 49){
+            printf("LIGHT IS ON\n");
+        }else printf("LIGHT IS OFF\n"); 
+        if(event->data[1] == 49){
+            printf("WATER IS ON\n");
+        }else printf("WATER IS OFF\n"); 
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");

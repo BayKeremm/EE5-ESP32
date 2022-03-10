@@ -1,5 +1,5 @@
 TODOS:
-1. Add the case where wifi disconnects from esp32.
+[X]1. Add the case where wifi disconnects from esp32.
 [X]2. Read values every minute.
 [X]3. HTTP request and queries for GT server
 [X]4. Individual stack for each task keeping running avg. 
@@ -8,15 +8,19 @@ TODOS:
 [X]7. Find out how to send commands from the android application to the esp32. (Bluetooth, WIFI, ?) --> public MQTT server will be used. If not polling.
 [X]8. Add ADC for sensors
 [X]9. SmartConfig to conenct to the wifi without credentials hard coded 
-[]10. MQTT subcribe publish manager
+[X]10. MQTT subcribe publish manager
 []11. PWM
+[]12. Put all the components together and assure problem free operation.
+[]13. Refactor the code, search for efficient ways.
+
+
 
 Notes:
     -- shared data structure will not be used--
     An array will be used by each task to store their last 5 readings.
-    Find out the MQTT broker cheese. 
-
-CHANGE
+    Find out the MQTT broker cheese. -> done
+    How to save power ?
+    Adding security. 
 
 
 
