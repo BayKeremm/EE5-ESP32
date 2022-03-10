@@ -24,6 +24,7 @@
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
 
+#include "driver/ledc.h"
 
 #include "nvs.h"
 #include <stdint.h>

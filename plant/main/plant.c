@@ -10,6 +10,7 @@
 #include "httpmanager.h"
 #include "config.h"
 #include "mqttmanager.h"
+#include "ledmanager.h"
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
 extern char mqtt_config_finish;
@@ -37,10 +38,8 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
-	
+	led_pwm_init();
     wifi_init_sta();
-    
-    
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
         MQTT_start();
@@ -49,7 +48,6 @@ void app_main(void)
     }
     int msg_id = esp_mqtt_client_publish(client, "/EE5iot15/warnings", "This is a message from the app_main task", 0, 1, 1);
     
-         
     
     //adc_init();
 	// LDR 

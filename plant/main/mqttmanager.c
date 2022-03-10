@@ -1,4 +1,6 @@
 #include "config.h"
+#include "ledmanager.h"
+
 
 static const char *TAG = "MQTT_ESP32";
 esp_mqtt_client_handle_t client; 
@@ -47,8 +49,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
         if(event->data[0] == 49){
-            printf("LIGHT IS ON\n");
-        }else printf("LIGHT IS OFF\n"); 
+                led_pwm_duty_update(7000);
+        }else    led_pwm_duty_update(400); 
         if(event->data[1] == 49){
             printf("WATER IS ON\n");
         }else printf("WATER IS OFF\n"); 
