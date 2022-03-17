@@ -25,6 +25,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         msg_id = esp_mqtt_client_subscribe(client, "/EE5iot15/commands", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        msg_id = esp_mqtt_client_subscribe(client, "/EE5iot15/commands/slider", 0);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         mqtt_config_finish = 1;
 
         break;
@@ -47,13 +49,20 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
 
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+        if(strcmp(event->topic,"/EE5iot15/commands/slider")){
+             
+        }
         printf("DATA=%.*s\r\n", event->data_len, event->data);
+
         if(event->data[0] == 49){
-                led_pwm_duty_update(7000);
-        }else    led_pwm_duty_update(400); 
+            //led_pwm_duty_update(7000);
+
+        }else
+            //led_pwm_duty_update(400); 
         if(event->data[1] == 49){
             printf("WATER IS ON\n");
-        }else printf("WATER IS OFF\n"); 
+        }else 
+            printf("WATER IS OFF\n"); 
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");

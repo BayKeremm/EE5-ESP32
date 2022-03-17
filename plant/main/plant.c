@@ -20,8 +20,6 @@ void add_measurement(float *,float);
 void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
-void task_MQTT(void * param);
-void task_wifi(void * param);
 
 static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
@@ -38,39 +36,51 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
-	led_pwm_init();
     wifi_init_sta();
+    while(wifi_connected == 0 ){
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        printf("waiting for wifi connection\n");
+    }
+    
+    // this gives the wrong time for now.
+    time_t now;
+    char strftime_buf[64];
+    struct tm timeinfo;
+
+    time(&now);
+    setenv("TZ", "GMT-1", 1);
+    tzset();
+    
+    localtime_r(&now, &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    ESP_LOGI("KEREM", "The current date/time in Leuven: %s", strftime_buf);
+   
+
+    // wait for wifi and mqtt
+    /*
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
         MQTT_start();
         vTaskDelay(3000 / portTICK_PERIOD_MS);
         printf("waiting for wifi connection and mqtt config\n");
     }
-    int msg_id = esp_mqtt_client_publish(client, "/EE5iot15/warnings", "This is a message from the app_main task", 0, 1, 1);
-    
-    
-    //adc_init();
+    */
+
+    /*
+    adc_init();
 	// LDR 
-	//xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
-	//xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
+	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
+	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 	// init WIFI
-	//xTaskCreate(task_wifi,"wifi",2048,NULL,2,NULL);
+	xTaskCreate(task_wifi,"wifi",2048,NULL,2,NULL);
     // init ADC
-    //adc_init();
-	// LDR 
 	//xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
 	//xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
 
 
     //http_POST_request(ENUM_MOISTURE,9876,14.04);
-}
-void task_wifi(void*param){
-    while(1){
-	    wifi_init_sta();
-    
-    }
-    vTaskDelete(NULL);
+    */
 }
 
 void task_temperature(void * param){
@@ -103,12 +113,6 @@ void task_light(void * param){
         add_measurement(light_array,voltage/1000); 
         printf("(LDR)The average is %f V\n", get_array_avg(light_array));
         vTaskDelay(3000 / portTICK_PERIOD_MS);
-    }
-    vTaskDelete(NULL);
-}
-void task_MQTT(void * param){
-    while(1){
-         
     }
     vTaskDelete(NULL);
 }

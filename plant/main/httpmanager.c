@@ -57,3 +57,8 @@ void http_POST_request(char * type, int timestamp, double value){
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
 }
+
+//int * http_GET_day_parameters(){
+   // char url[200] ="https://studev.groept.be/api/a21iot15/insert_measurement/";
+
+//}

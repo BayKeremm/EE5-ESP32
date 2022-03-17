@@ -49,7 +49,8 @@
 #define WIFI_FAIL_BIT BIT1
 #define ESPTOUCH_DONE_BIT BIT2
 
-#define BROKER_URI "mqtt://52.28.133.146:1883"
+#define BROKER_URI "mqtt://35.156.9.114:1883"
+#define DAY_PARAMETERS_URI = "https://a21iot15.studev.groept.be/index.php/api/day"
 
 // ADC paramters 
 
