@@ -10,9 +10,14 @@ TODOS:
 [X]9. SmartConfig to conenct to the wifi without credentials hard coded 
 [X]10. MQTT subcribe publish manager
 []11. PWM
-[]12. Put all the components together and assure problem free operation.
-[]13. Refactor the code, search for efficient ways.
+[]12. Add sntp protocol to sync time and be able to check it reqularly, parametrise a function for it which returns an int which has the same format with the api response.
+[]13. Parse the API response in http_on_data_event 
+[]14. Add TLS to the requests.
+[]15. Json web token for the API calls.
 
+// FINAL STEPS
+[]*. Put all the components together and assure problem free operation.
+[]*. Refactor the code, search for efficient ways.
 
 
 Notes:
@@ -20,7 +25,7 @@ Notes:
     An array will be used by each task to store their last 5 readings.
     Find out the MQTT broker cheese. -> done
     How to save power ?
-    Adding security. 
+    Adding security. JWT(json web token)  
 
 
 
