@@ -1,0 +1,22 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "/Users/keremokyay/esp/esp-idf/components/bootloader/subproject",
+    "build_dir":          "/Users/keremokyay/myStuff/university/EE5/project-code-esp32/plant/build/bootloader",
+    "config_file":        "/Users/keremokyay/myStuff/university/EE5/project-code-esp32/plant/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v5.0-dev-1599-gb66cc63c41-dirty",
+    "target":             "esp32",
+    "rev":                "0",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "/Users/keremokyay/esp/esp-idf/components/efuse/Kconfig;/Users/keremokyay/esp/esp-idf/components/esp32/Kconfig;/Users/keremokyay/esp/esp-idf/components/esp_common/Kconfig;/Users/keremokyay/esp/esp-idf/components/esp_hw_support/Kconfig;/Users/keremokyay/esp/esp-idf/components/esp_system/Kconfig;/Users/keremokyay/esp/esp-idf/components/freertos/Kconfig;/Users/keremokyay/esp/esp-idf/components/hal/Kconfig;/Users/keremokyay/esp/esp-idf/components/log/Kconfig;/Users/keremokyay/esp/esp-idf/components/newlib/Kconfig;/Users/keremokyay/esp/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "/Users/keremokyay/esp/esp-idf/components/bootloader/Kconfig.projbuild;/Users/keremokyay/esp/esp-idf/components/esp_rom/Kconfig.projbuild;/Users/keremokyay/esp/esp-idf/components/esptool_py/Kconfig.projbuild;/Users/keremokyay/esp/esp-idf/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_hw_support", "esp_rom", "esp_system", "esptool_py", "freertos", "hal", "log", "main", "micro-ecc", "newlib", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "/Users/keremokyay/esp/esp-idf/components/bootloader", "/Users/keremokyay/esp/esp-idf/components/bootloader_support", "/Users/keremokyay/esp/esp-idf/components/efuse", "/Users/keremokyay/esp/esp-idf/components/esp32", "/Users/keremokyay/esp/esp-idf/components/esp_common", "/Users/keremokyay/esp/esp-idf/components/esp_hw_support", "/Users/keremokyay/esp/esp-idf/components/esp_rom", "/Users/keremokyay/esp/esp-idf/components/esp_system", "/Users/keremokyay/esp/esp-idf/components/esptool_py", "/Users/keremokyay/esp/esp-idf/components/freertos", "/Users/keremokyay/esp/esp-idf/components/hal", "/Users/keremokyay/esp/esp-idf/components/log", "/Users/keremokyay/esp/esp-idf/components/bootloader/subproject/main", "/Users/keremokyay/esp/esp-idf/components/bootloader/subproject/components/micro-ecc", "/Users/keremokyay/esp/esp-idf/components/newlib", "/Users/keremokyay/esp/esp-idf/components/partition_table", "/Users/keremokyay/esp/esp-idf/components/soc", "/Users/keremokyay/esp/esp-idf/components/spi_flash", "/Users/keremokyay/esp/esp-idf/components/xtensa", "" ],
+    "debug_prefix_map_gdbinit": ""
+}

@@ -1,2 +1,2 @@
-idf_component_register(SRCS "plant.c" "wifimanager.c" "httpmanager.c" "ADCmanager.c" "mqttmanager.c" "ledmanager.c"
+idf_component_register(SRCS "plant.c" "wifimanager.c" "httpmanager.c" "ADCmanager.c" "mqttmanager.c" "ledmanager.c" "sntpmanager"
                     INCLUDE_DIRS ".")

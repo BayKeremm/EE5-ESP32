@@ -10,6 +10,7 @@
 #include "httpmanager.h"
 #include "config.h"
 #include "mqttmanager.h"
+#include "sntpmanager.h"
 #include "ledmanager.h"
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
@@ -43,13 +44,14 @@ void app_main(void)
     }
     
     // this gives the wrong time for now.
+    initialize_sntp();
     time_t now;
     char strftime_buf[64];
     struct tm timeinfo;
 
-    time(&now);
-    setenv("TZ", "GMT-1", 1);
-    tzset();
+    //setenv("TZ", "GMT-1", 1);
+    //tzset();
+    //time(&now);
     
     localtime_r(&now, &timeinfo);
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
