@@ -30,7 +30,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "esp_sntp.h"
 
 #define RUN_AVG_LENGTH 5
 

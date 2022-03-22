@@ -10,7 +10,6 @@
 #include "httpmanager.h"
 #include "config.h"
 #include "mqttmanager.h"
-#include "sntpmanager.h"
 #include "ledmanager.h"
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
@@ -25,9 +24,6 @@ void task_light(void * param);
 static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
 //static float temperature_array[RUN_AVG_LENGTH];
-
-
-
 void app_main(void)
 {
 	// init memory
@@ -38,35 +34,20 @@ void app_main(void)
 	}
 	ESP_ERROR_CHECK(ret);
     wifi_init_sta();
-    while(wifi_connected == 0 ){
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-        printf("waiting for wifi connection\n");
-    }
-    
-    // this gives the wrong time for now.
-    initialize_sntp();
-    time_t now;
-    char strftime_buf[64];
-    struct tm timeinfo;
 
-    //setenv("TZ", "GMT-1", 1);
-    //tzset();
-    //time(&now);
-    
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI("KEREM", "The current date/time in Leuven: %s", strftime_buf);
-   
-
-    // wait for wifi and mqtt
-    /*
+    //    wait for wifi and mqtt
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
         MQTT_start();
         vTaskDelay(3000 / portTICK_PERIOD_MS);
         printf("waiting for wifi connection and mqtt config\n");
     }
-    */
+    int a = 5;
+    while(a > 0){
+        http_GET_day_parameters();
+        a--;
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+    }
 
     /*
     adc_init();
