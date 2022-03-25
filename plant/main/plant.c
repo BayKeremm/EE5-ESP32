@@ -33,6 +33,7 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
+    led_pwm_init();
     wifi_init_sta();
 
     //    wait for wifi and mqtt
@@ -42,12 +43,14 @@ void app_main(void)
         vTaskDelay(3000 / portTICK_PERIOD_MS);
         printf("waiting for wifi connection and mqtt config\n");
     }
-    int a = 5;
-    while(a > 0){
-        http_GET_day_parameters();
-        a--;
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-    }
+
+    //int a = 5;
+    //while(a > 0){
+        //http_GET_day_parameters();
+        //http_POST_request(ENUM_LIGHT,2222,22.22);
+        //a--;
+        //vTaskDelay(3000 / portTICK_PERIOD_MS);
+    //}
 
     /*
     adc_init();

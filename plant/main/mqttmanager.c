@@ -50,19 +50,29 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         if(strcmp(event->topic,"/EE5iot15/commands/slider")){
-             
+
+            if(event->data[1] == 49){
+                led_pwm_duty_update(8090);
+            }else{
+                led_pwm_duty_update(0);
+
+            }
+            //if(event->data[0] == 48){
+            //int sum = event->data[2]+event->data[3]; 
+            //if(sum == 96)
+            //led_pwm_duty_update(0);
+            //else{
+                //int new_val =383*sum-36662;
+                //led_pwm_duty_update(new_val);
+
+            //}
+            //}else
+                //led_pwm_duty_update(7000);
+            //if(event->data[1] == 49){
+                //printf("WATER IS ON\n");
+            //}else 
+                //printf("WATER IS OFF\n"); 
         }
-        printf("DATA=%.*s\r\n", event->data_len, event->data);
-
-        if(event->data[0] == 49){
-            //led_pwm_duty_update(7000);
-
-        }else
-            //led_pwm_duty_update(400); 
-        if(event->data[1] == 49){
-            printf("WATER IS ON\n");
-        }else 
-            printf("WATER IS OFF\n"); 
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");

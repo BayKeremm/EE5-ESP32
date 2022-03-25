@@ -36,6 +36,9 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+#define DAY_URL "https://a21iot15.studev.groept.be/index.php/api/day"
+#define INSERT_URL "https://a21iot15.studev.groept.be/index.php/api/put/" 
+#define TOKEN "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRvbG1hIiwiZXhwIjoxNjUzMjk1NTA5fQ.31Jhv4f6xLBw7ct5qugHWudc11E_WZLlj-nTc0trr4g"
 // Database paramters
 #define ENUM_TEMPERATURE "Temperature"
 #define ENUM_MOISTURE "Moisture"
@@ -51,7 +54,6 @@
 #define ESPTOUCH_DONE_BIT BIT2
 
 #define BROKER_URI "mqtt://35.156.9.114:1883"
-#define DAY_PARAMETERS_URI = "https://a21iot15.studev.groept.be/index.php/api/day"
 
 // ADC paramters 
 
