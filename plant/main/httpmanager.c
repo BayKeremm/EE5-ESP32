@@ -5,8 +5,7 @@
 #define MAX_HTTP_RECV_BUFFER 512
 #define MAX_HTTP_OUTPUT_BUFFER 2048
 static const char *TAG = "HTTP_CLIENT";
-//extern const char root_cert_pem_start[] asm("_binary_root_cert_pem_start");
-//extern const char com_root_cert_pem_end[]   asm("_binary_root_cert_pem_end");
+extern const char root_cert_pem_start[] asm("_binary_root_cert_pem_start");
 
 esp_err_t _http_event_handler(esp_http_client_event_t * evt){
     switch(evt->event_id) {
@@ -69,6 +68,7 @@ void http_POST_request(char * type, int timestamp, double value){
     esp_http_client_config_t config = {
         .url =url, 
         .event_handler = _http_event_handler,
+        .cert_pem = root_cert_pem_start,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
@@ -83,6 +83,7 @@ void  http_GET_day_parameters(){
     esp_http_client_config_t config = {
         .url =url, 
         .event_handler = _http_event_handler,
+        .cert_pem = root_cert_pem_start,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);

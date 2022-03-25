@@ -37,22 +37,26 @@ void app_main(void)
     wifi_init_sta();
 
     //    wait for wifi and mqtt
+    while(wifi_connected == 0 ){
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        printf("waiting for wifi connection\n");
+    }
+
+    int a = 5;
+    while(a > 0){
+        http_GET_day_parameters();
+        http_POST_request(ENUM_LIGHT,2222,22.22);
+        a--;
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+    }
+
+    /*
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
         MQTT_start();
         vTaskDelay(3000 / portTICK_PERIOD_MS);
         printf("waiting for wifi connection and mqtt config\n");
     }
-
-    //int a = 5;
-    //while(a > 0){
-        //http_GET_day_parameters();
-        //http_POST_request(ENUM_LIGHT,2222,22.22);
-        //a--;
-        //vTaskDelay(3000 / portTICK_PERIOD_MS);
-    //}
-
-    /*
     adc_init();
 	// LDR 
 	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
