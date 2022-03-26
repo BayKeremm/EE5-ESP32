@@ -27,6 +27,9 @@ Notes:
     How to save power ?
     Adding security. JWT(json web token) --> going to be hard coded ?
 
+    ???
+    manual mode and automatic mdoe discussion.
+
 
 
 

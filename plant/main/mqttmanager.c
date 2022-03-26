@@ -36,8 +36,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
     case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-        msg_id = esp_mqtt_client_publish(client, "/EE5iot15/warnings", "Subscribed to the topic commands and this is confirmation", 0, 1, 1);
-        ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_UNSUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
@@ -47,31 +45,20 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+        if(strcmp(event->topic,"/EE5iot15/commands/")){
+            if(event->data[0] == 48){ // light bit 0
 
-        printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-        if(strcmp(event->topic,"/EE5iot15/commands/slider")){
-
-            if(event->data[1] == 49){
-                led_pwm_duty_update(8090);
-            }else{
-                led_pwm_duty_update(0);
-
+            }else{ // light bit not 0
+                int sum = event->data[2]+event->data[3]; 
+                int new_val =383*sum-36662;
+                led_pwm_duty_update(new_val);
             }
-            //if(event->data[0] == 48){
-            //int sum = event->data[2]+event->data[3]; 
-            //if(sum == 96)
-            //led_pwm_duty_update(0);
-            //else{
-                //int new_val =383*sum-36662;
-                //led_pwm_duty_update(new_val);
+            if(event->data[1] == 48){ // water bit 0
+                gpio_set_level(GPIO_NUM_26,0);
 
-            //}
-            //}else
-                //led_pwm_duty_update(7000);
-            //if(event->data[1] == 49){
-                //printf("WATER IS ON\n");
-            //}else 
-                //printf("WATER IS OFF\n"); 
+            }else{ // water bit not 0
+                gpio_set_level(GPIO_NUM_26,1);
+            }
         }
         break;
     case MQTT_EVENT_ERROR:
