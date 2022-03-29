@@ -10,9 +10,7 @@
 #define LEDC_FREQUENCY          (200) // Frequency in Hertz. Set frequency at 5 kHz)))))
 
 void led_off(void){
-
-}
-void led_on(void){
+    ledc_stop(LEDC_MODE, LEDC_CHANNEL, 0);
 
 }
 void led_pwm_duty_update(uint32_t duty){
@@ -45,3 +43,4 @@ void led_pwm_init(void){
     
                             
 }
+

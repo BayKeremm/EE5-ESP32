@@ -65,16 +65,16 @@ void task_temperature(void * param){
     float voltage;
     float temperature;
     TickType_t xLastWakeTime;
-    BaseType_t xWasDelayed;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
         val = adc1_get_raw(ADC1_CHANNEL_6);
         voltage = adc_get_voltage(val);
         temperature = voltage/(3300);
-        int index = reading*10-1;
+        int index = temperature*10-1;
         if(index > 33)index=33;
         if(index<0)index=0;
+        printf("(TEMPERATURE) the reading is %f\n",temperature); 
         temperature = temp_array[index];
         add_measurement(temperature_array,temperature); 
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
@@ -85,7 +85,6 @@ void task_moisture(void * param){
     int val;
     float voltage;
     TickType_t xLastWakeTime;
-    BaseType_t xWasDelayed;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
@@ -103,7 +102,6 @@ void task_light(void * param){
     int val;
     float voltage;
     TickType_t xLastWakeTime;
-    BaseType_t xWasDelayed;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
@@ -133,5 +131,4 @@ float get_array_avg(float * array){
         sum+=array[i];
     }
     return sum / RUN_AVG_LENGTH;
-}
 }

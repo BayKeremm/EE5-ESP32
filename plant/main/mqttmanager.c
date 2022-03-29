@@ -46,18 +46,22 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         if(strcmp(event->topic,"/EE5iot15/commands/")){
-            if(event->data[0] == 48){ // light bit 0
+            if(event->data[0] == 49){ // MANUAL take commands from the user
+                if(event->data[1]==49){
+                    int sum = event->data[3]+event->data[4]; 
+                    int new_val =383*sum-36662;
+                    led_pwm_duty_update(new_val);
+                }
+                if(event->data[2] == 48){ // water bit 0
+                    gpio_set_level(GPIO_NUM_26,0);
 
-            }else{ // light bit not 0
-                int sum = event->data[2]+event->data[3]; 
-                int new_val =383*sum-36662;
-                led_pwm_duty_update(new_val);
-            }
-            if(event->data[1] == 48){ // water bit 0
+                }else{ // water bit not 0
+                    gpio_set_level(GPIO_NUM_26,1);
+                }
+            }else{
                 gpio_set_level(GPIO_NUM_26,0);
+                led_off();
 
-            }else{ // water bit not 0
-                gpio_set_level(GPIO_NUM_26,1);
             }
         }
         break;
