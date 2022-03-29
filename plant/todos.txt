@@ -4,20 +4,25 @@
 [X]3. HTTP request and queries for GT server
 [X]4. Individual stack for each task keeping running avg. 
 [X]5. Find out how to create a task for each pin and how would the priorities will be between these tasks.
-[]6. Find out how the deep sleep works. For power saving purposes.
+[NO]6. Find out how the deep sleep works. For power saving purposes.
 [X]7. Find out how to send commands from the android application to the esp32. (Bluetooth, WIFI, ?) --> public MQTT server will be used. If not polling.
 [X]8. Add ADC for sensors
 [X]9. SmartConfig to conenct to the wifi without credentials hard coded 
 [X]10. MQTT subcribe publish manager
 [X]11. PWM
-[]12. Add sntp protocol to sync time and be able to check it reqularly, parametrise a function for it which returns an int which has the same format with the api response.
+[NO]12. Add sntp protocol to sync time and be able to check it reqularly, parametrise a function for it which returns an int which has the same format with the api response.
 [X]13. Parse the API response in http_on_data_event 
 [X]14. Add TLS to the requests.
-[]15. Add json web token for the API calls.
+[X]15. Add json web token for the API calls.
 
 // FINAL STEPS
 []*. Put all the components together and assure problem free operation.
 []*. Refactor the code, search for efficient ways.
+
+PHP REST API
+[]1. put time parameter on the server
+
+
 
 
 Notes:
@@ -25,10 +30,10 @@ Notes:
     An array will be used by each task to store their last 5 readings.
     Find out the MQTT broker cheese. -> done
     How to save power ?
-    Adding security. JWT(json web token) --> going to be hard coded ?
+    Adding security. JWT(json web token) --> going to be hard coded ? --> yes
 
     ???
-    manual mode and automatic mdoe discussion.
+    manual mode and automatic mdoe discussion. DONE
 
 
 
