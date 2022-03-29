@@ -1,9 +1,3 @@
-/*
-    Questions:
-        1. How the task priorities work, and how to give CPU time for lower priority tasks?
-        2. How to use the QUEUE API for the shared data structure?
-        3. Call http request after every measurement ?
-*/
 
 #include "wifimanager.h"
 #include "ADCmanager.h"
@@ -14,12 +8,19 @@
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
 extern char mqtt_config_finish;
+const float volt_array[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3,
+    1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2, 3.3, 3.4};
+
+const float temp_array[] = {27.0, 26.6, 26.2, 25.8, 25.4, 25.0, 24.6, 24.2, 23.8, 23.4, 23.0, 
+    22.6, 22.2, 21.8, 21.4, 21.0, 20.6, 20.2, 19.8, 19.4, 19.0, 18.6, 18.2, 17.8, 17.4, 16.9, 16.5, 16.1, 
+    15.7, 15.3, 14.9, 14.4, 14.0};
 
 float get_array_avg(float *);
 void add_measurement(float *,float);
 void task_temperature(void * param);
 void task_moisture(void * param);
 void task_light(void * param);
+float binary_search_voltage(float);
 
 static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
@@ -59,8 +60,10 @@ void app_main(void)
 }
 
 void task_temperature(void * param){
+
     int val;
     float voltage;
+    float temperature;
     TickType_t xLastWakeTime;
     BaseType_t xWasDelayed;
     xLastWakeTime = xTaskGetTickCount ();
@@ -68,10 +71,12 @@ void task_temperature(void * param){
     while(1){
         val = adc1_get_raw(ADC1_CHANNEL_6);
         voltage = adc_get_voltage(val);
-        float moisture = 100 - 100 * voltage/(3300);
-        printf("(MOISTURE)The moisture percentage is %f\n",moisture); 
-        add_measurement(temperature_array,moisture); 
-        printf("(MOISTURE)The average is %f V\n", get_array_avg(temperature_array));
+        temperature = voltage/(3300);
+        int index = reading*10-1;
+        if(index > 33)index=33;
+        if(index<0)index=0;
+        temperature = temp_array[index];
+        add_measurement(temperature_array,temperature); 
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
     vTaskDelete(NULL);
@@ -128,4 +133,5 @@ float get_array_avg(float * array){
         sum+=array[i];
     }
     return sum / RUN_AVG_LENGTH;
+}
 }
