@@ -14,6 +14,8 @@
 [X]13. Parse the API response in http_on_data_event 
 [X]14. Add TLS to the requests.
 [X]15. Add json web token for the API calls.
+[]16.  Think about edge cases for wifi, measurements, ADC values, etc; 
+[]17. Add critical plant parameters and intelligence
 
 // FINAL STEPS
 []*. Put all the components together and assure problem free operation.
@@ -21,6 +23,7 @@
 
 PHP REST API
 []1. put time parameter on the server
+[]2. Add photo functionality
 
 
 
@@ -32,8 +35,15 @@ Notes:
     How to save power ?
     Adding security. JWT(json web token) --> going to be hard coded ? --> yes
 
-    ???
     manual mode and automatic mdoe discussion. DONE
+
+    PROBLEM OF USER DEVICE IDENTIFICATION:
+        how to figure out which user has which device?
+            Solution:
+                each device has an id. 
+                this id is used to create mqtt topics 
+                and then in the android app, send mqtt publish according to which user is using which device. 
+                In the database, each user is associated with a device.
 
 
 

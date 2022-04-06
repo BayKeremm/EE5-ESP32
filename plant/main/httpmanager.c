@@ -72,11 +72,11 @@ void http_POST_request(char * type, int timestamp, double value){
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
-    esp_http_client_perform(client);
+    if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the POST REQUEST");
     esp_http_client_cleanup(client);
 }
 
-void  http_GET_day_parameters(){
+void  http_GET_day_parameter(){
     char url[600] = DAY_URL;
     strcat(url,"?token=");
     strcat(url,TOKEN);

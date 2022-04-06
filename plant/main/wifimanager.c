@@ -14,7 +14,7 @@ static void smartconfig_task(void * parm);
 static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        xTaskCreate(smartconfig_task, "smartconfig_task", 4096, NULL, 3, NULL);
+        if(xTaskCreate(smartconfig_task, "smartconfig_task", 4096, NULL, 3, NULL)!= pdPASS)abort();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
         if(s_retry_num < 5){
 			esp_wifi_connect();

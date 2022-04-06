@@ -1,4 +1,3 @@
-
 #include "wifimanager.h"
 #include "ADCmanager.h"
 #include "httpmanager.h"
@@ -25,6 +24,7 @@ float binary_search_voltage(float);
 static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
 static float temperature_array[RUN_AVG_LENGTH];
+
 void app_main(void)
 {
     // init memory esp32
@@ -34,33 +34,34 @@ void app_main(void)
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
-    gpio_reset_pin(GPIO_NUM_26);
-    gpio_set_direction(GPIO_NUM_26, GPIO_MODE_OUTPUT);
-    
     // init ADC
-    adc_init();
+    adc_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
-    // init led pwm
-    led_pwm_init();
+     //init led pwm
+    led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
     // init wifi and connect 
-    wifi_init_sta();
+    wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
+    
+    //set GPIO direction
+    ESP_ERROR_CHECK(gpio_reset_pin(GPIO_NUM_26)); // abort if not successful
+    ESP_ERROR_CHECK(gpio_set_direction(GPIO_NUM_26, GPIO_MODE_OUTPUT)); // abort if not successful
 
     // wait for wifi and mqtt
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
-        MQTT_start(); // when wifi is connected init mqtt
+        MQTT_start(); // abort when not successfull
         vTaskDelay(3000 / portTICK_PERIOD_MS); 
         printf("waiting for wifi connection and mqtt config\n");
     }
 
-	xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL);
-	xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL);
+	if(xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
+	if(xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
+	if(xTaskCreate(task_light,"light_sensor",2048,NULL,3,NULL)!=pdPASS) abort();
 }
 
+//when nothing is connected ADC reads 0.043030 V
 void task_temperature(void * param){
-
     int val;
     float voltage;
     float temperature;
@@ -68,14 +69,20 @@ void task_temperature(void * param){
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
+        // get reading
         val = adc1_get_raw(ADC1_CHANNEL_6);
         voltage = adc_get_voltage(val);
         temperature = voltage/(3300);
+        if(temperature > 3.3 || temperature<0.05)continue;
+        printf("temperature reading %f\n",temperature);
+
+        // convert reading to temperature
         int index = temperature*10-1;
         if(index > 33)index=33;
         if(index<0)index=0;
-        printf("(TEMPERATURE) the reading is %f\n",temperature); 
         temperature = temp_array[index];
+
+        // add temperature to the array
         add_measurement(temperature_array,temperature); 
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
@@ -88,12 +95,17 @@ void task_moisture(void * param){
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
+        // get reading
         val = adc1_get_raw(ADC1_CHANNEL_0);
         voltage = adc_get_voltage(val);
+        if(voltage > 3.3 || voltage<0.05)continue;
+        printf("moisture reading %f\n",voltage/3300);
+
+        //convert voltage to percentage
         float moisture = 100 - 100 * voltage/(3300);
-        printf("(MOISTURE)The moisture percentage is %f\n",moisture); 
+        
+        // add to the moisture array
         add_measurement(moisture_array,moisture); 
-        printf("(MOISTURE)The average is %f V\n", get_array_avg(moisture_array));
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
     vTaskDelete(NULL);
@@ -105,11 +117,14 @@ void task_light(void * param){
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(1000);
     while(1){
+        // get reading
         val = adc1_get_raw(ADC1_CHANNEL_3);
         voltage = adc_get_voltage(val);
-        printf("(LDR)The voltage value is %f V\n", voltage/1000);
+        if(voltage > 3.3 || voltage<0.05)continue;
+        printf("light reading %f\n",voltage/3300);
+
+        // add to the array
         add_measurement(light_array,voltage/1000); 
-        printf("(LDR)The average is %f V\n", get_array_avg(light_array));
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
     vTaskDelete(NULL);
