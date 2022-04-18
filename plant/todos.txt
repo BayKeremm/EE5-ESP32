@@ -16,14 +16,18 @@
 [X]15. Add json web token for the API calls.
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
 []17. Add critical plant parameters and intelligence
+[]18. Add logging to the server.
 
 // FINAL STEPS
 []*. Put all the components together and assure problem free operation.
 []*. Refactor the code, search for efficient ways.
 
 PHP REST API
-[]1. put time parameter on the server
-[]2. Add photo functionality
+[X]1. put time parameter on the server --> done on the database
+[]2. Add photo functionality --> BLOB
+
+ANDROID APP
+[]1. Add the functionality to add the device to the logged in user.
 
 
 
