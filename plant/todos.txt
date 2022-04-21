@@ -16,7 +16,8 @@
 [X]15. Add json web token for the API calls.
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
 []17. Add critical plant parameters and intelligence
-[]18. Add logging to the server.
+[]18. Get parameters from the server
+[]19. create parser
 
 // FINAL STEPS
 []*. Put all the components together and assure problem free operation.

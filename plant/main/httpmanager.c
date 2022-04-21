@@ -1,5 +1,6 @@
 #include "config.h"
 #include "httpmanager.h"
+#include "parser.h"
 
 
 #define MAX_HTTP_RECV_BUFFER 512
@@ -23,17 +24,10 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
             break;
         case HTTP_EVENT_ON_DATA:
             ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
-            const char* s = evt->data;
-            int i1;
+            char * s = evt->data;
             if (strstr(s, "day") != NULL){
-                if (1 == sscanf(s,"%*[^0123456789]%d", &i1)){
-                    if(i1 == 1){
-                        printf("IT IS DAY\n");
-                    }else{
-                        printf("IT IS NIGHT\n");
-                    }
-
-            }
+                int result = parse_day_response(evt->data);
+                printf("result is %d\n",result);
             }
             break;
         case HTTP_EVENT_ON_FINISH:
@@ -50,7 +44,7 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
 }
 
 
-void http_POST_request(char * type, int timestamp, double value){
+void http_POST_measurement_request(char * type, int timestamp, double value){
     char time[16];
     char value_s[50];
     snprintf(value_s, 50, "%f", value);
@@ -73,6 +67,19 @@ void http_POST_request(char * type, int timestamp, double value){
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the POST REQUEST");
+    esp_http_client_cleanup(client);
+}
+void http_GET_ideal_parameters(char * deviceId){
+    char url[600]; 
+
+    esp_http_client_config_t config = {
+        .url =url, 
+        .event_handler = _http_event_handler,
+        .cert_pem = root_cert_pem_start,
+    };
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the GET REQUEST");
     esp_http_client_cleanup(client);
 }
 

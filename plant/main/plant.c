@@ -7,8 +7,12 @@
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
 extern char mqtt_config_finish;
-extern float temp_array;
-extern float volt_array;
+float volt_array[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3,
+    1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2, 3.3, 3.4};
+
+float temp_array[] = {27.0, 26.6, 26.2, 25.8, 25.4, 25.0, 24.6, 24.2, 23.8, 23.4, 23.0, 
+    22.6, 22.2, 21.8, 21.4, 21.0, 20.6, 20.2, 19.8, 19.4, 19.0, 18.6, 18.2, 17.8, 17.4, 16.9, 16.5, 16.1, 
+    15.7, 15.3, 14.9, 14.4, 14.0};
 float get_array_avg(float *);
 void add_measurement(float *,float);
 void task_temperature(void * param);
@@ -20,6 +24,7 @@ static float light_array[RUN_AVG_LENGTH];
 static float moisture_array[RUN_AVG_LENGTH];
 static float temperature_array[RUN_AVG_LENGTH];
 
+
 void app_main(void)
 {
     // init memory esp32
@@ -30,10 +35,10 @@ void app_main(void)
 	}
 	ESP_ERROR_CHECK(ret);
     // init ADC
-    adc_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
+    //adc_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
      //init led pwm
-    led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
+    //led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
     // init wifi and connect 
     wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
@@ -47,7 +52,8 @@ void app_main(void)
         printf("waiting for wifi connection and mqtt config\n");
     }
 
-    // get user data from the database.
+    // get user data from the database and ideal parameters.
+
 
     //set GPIO direction
     // gpio_set_level to turn on and off
@@ -56,7 +62,7 @@ void app_main(void)
 
 	if(xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
 	if(xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
-	if(xTaskCreate(task_light,"light_sensor",2048,NULL,3,NULL)!=pdPASS) abort();
+	if(xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
 }
 
 //when nothing is connected ADC reads 0.043030 V
