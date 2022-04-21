@@ -2,7 +2,6 @@
 #include "httpmanager.h"
 #include "parser.h"
 
-
 #define MAX_HTTP_RECV_BUFFER 512
 #define MAX_HTTP_OUTPUT_BUFFER 2048
 static const char *TAG = "HTTP_CLIENT";
@@ -26,8 +25,12 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
             ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
             char * s = evt->data;
             if (strstr(s, "day") != NULL){
-                int result = parse_day_response(evt->data);
-                printf("result is %d\n",result);
+                double * params = parseDayParams(s);
+                printf("day:%f wait:%f",params[0],params[1]);
+            }
+            if (strstr(s, "ideal") != NULL){
+                double * params = parseIdealParams(s);
+                printf("temp:%f moist:%f light:%f",params[0],params[1],params[2]);
             }
             break;
         case HTTP_EVENT_ON_FINISH:
@@ -69,16 +72,18 @@ void http_POST_measurement_request(char * type, int timestamp, double value){
     if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the POST REQUEST");
     esp_http_client_cleanup(client);
 }
-void http_GET_ideal_parameters(char * deviceId){
-    char url[600]; 
-
+void http_GET_ideal_parameters(){
+    char url[600] = IDEAL_URL; 
+    strcat(url,DEVICEID);
+    strcat(url,"?token=");
+    strcat(url,TOKEN);
     esp_http_client_config_t config = {
         .url =url, 
         .event_handler = _http_event_handler,
         .cert_pem = root_cert_pem_start,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
-    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_http_client_set_method(client, HTTP_METHOD_GET);
     if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the GET REQUEST");
     esp_http_client_cleanup(client);
 }

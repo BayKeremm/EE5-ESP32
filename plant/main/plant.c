@@ -38,38 +38,41 @@ void app_main(void)
     //adc_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
      //init led pwm
-    //led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
+    led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
     // init wifi and connect 
     wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
 
-    // wait for wifi and mqtt
+   // // wait for wifi and mqtt
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1)
         MQTT_start(); // abort when not successfull
         vTaskDelay(3000 / portTICK_PERIOD_MS); 
         printf("waiting for wifi connection and mqtt config\n");
     }
+    http_GET_ideal_parameters();
+    http_GET_day_parameter();
 
     // get user data from the database and ideal parameters.
 
 
     //set GPIO direction
     // gpio_set_level to turn on and off
-    ESP_ERROR_CHECK(gpio_reset_pin(GPIO_NUM_26)); // abort if not successful
-    ESP_ERROR_CHECK(gpio_set_direction(GPIO_NUM_26, GPIO_MODE_OUTPUT)); // abort if not successful
+  //  ESP_ERROR_CHECK(gpio_reset_pin(GPIO_NUM_25)); // abort if not successful
+  //  ESP_ERROR_CHECK(gpio_set_direction(GPIO_NUM_25, GPIO_MODE_OUTPUT)); // abort if not successful
+  //  gpio_set_level(GPIO_NUM_25,1);
 
-	if(xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
-	if(xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
-	if(xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
+//	if(xTaskCreate(task_moisture,"moisture_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
+//	if(xTaskCreate(task_temperature,"temperature_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
+//	if(xTaskCreate(task_light,"light_sensor",2048,NULL,2,NULL)!=pdPASS) abort();
 }
 
 //when nothing is connected ADC reads 0.043030 V
 void task_temperature(void * param){
     int index;
     int val;
-    int avg;
+    float avg;
     float voltage;
     float temperature;
     TickType_t xLastWakeTime;
@@ -104,6 +107,7 @@ void task_temperature(void * param){
 void task_moisture(void * param){
     int val;
     float voltage;
+    float avg;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(60000);
@@ -133,6 +137,7 @@ void task_moisture(void * param){
 void task_light(void * param){
     int val;
     float voltage;
+    float avg;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(60000);
