@@ -6,6 +6,7 @@
 #define MAX_HTTP_OUTPUT_BUFFER 2048
 static const char *TAG = "HTTP_CLIENT";
 extern const char root_cert_pem_start[] asm("_binary_root_cert_pem_start");
+extern double ownershipId;
 
 esp_err_t _http_event_handler(esp_http_client_event_t * evt){
     switch(evt->event_id) {
@@ -25,19 +26,17 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
             ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
             char * s = evt->data;
             if (strstr(s, "day") != NULL){
-                double * params = parseDayParams(s);
-                printf("day:%f wait:%f",params[0],params[1]);
+                parseDayParams(s);
             }
             if (strstr(s, "ideal") != NULL){
-                double * params = parseIdealParams(s);
-                printf("temp:%f moist:%f light:%f",params[0],params[1],params[2]);
+                parseIdealParams(s);
             }
             break;
         case HTTP_EVENT_ON_FINISH:
             ESP_LOGD(TAG, "HTTP_EVENT_ON_FINISH");
             break;
         case HTTP_EVENT_DISCONNECTED:
-            ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
+            ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED");
             break;
         case HTTP_EVENT_REDIRECT:
             ESP_LOGD(TAG, "HTTP_EVENT_REDIRECT");
@@ -47,21 +46,22 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
 }
 
 
-void http_POST_measurement_request(char * type, int timestamp, double value){
-    char time[16];
+void http_POST_measurement_request(char * type, double value){
     char value_s[50];
+    char ownerId[50];
     snprintf(value_s, 50, "%f", value);
+    snprintf(ownerId, 50, "%f", ownershipId);
     
     char url[600] = INSERT_URL;
+    // type/value/ownershipId
 
     strcat(url,type);
     strcat(url,"/");
-    strcat(url,itoa(timestamp,time,10));
-    strcat(url,"/");
     strcat(url,value_s);
+    strcat(url,"/");
+    strcat(url,ownerId);
     strcat(url,"?token=");
     strcat(url,TOKEN);
-    printf("type %s timestamp %d value %f inserted in the database\n",type,timestamp,value);
     esp_http_client_config_t config = {
         .url =url, 
         .event_handler = _http_event_handler,

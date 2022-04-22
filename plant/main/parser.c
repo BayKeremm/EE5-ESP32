@@ -1,13 +1,16 @@
 #include "parser.h"
 #include <stdio.h>
 #include "cJSON.h"
-double params[3];
-double dayWait[2];
+// globals
+extern double idealParams[3];
+extern double dayWait[2];
+extern double ownershipId;
 
-double * parseIdealParams(char * response){
+void parseIdealParams(char * response){
     const cJSON * T = NULL;
     const cJSON * M=NULL;
     const cJSON * L=NULL;
+    const cJSON * owner_id=NULL;
     cJSON *response_json = cJSON_Parse(response);
 
     if (response_json == NULL)
@@ -22,21 +25,22 @@ double * parseIdealParams(char * response){
     T = cJSON_GetObjectItem(response_json,"idealTemperature");
     M = cJSON_GetObjectItem(response_json,"idealMoisture");
     L = cJSON_GetObjectItem(response_json,"idealLight");
-    if (!cJSON_IsNumber(T) || !cJSON_IsNumber(M)||!cJSON_IsNumber(L))
+    owner_id = cJSON_GetObjectItem(response_json,"ownershipId");
+    if (!cJSON_IsNumber(T) || !cJSON_IsNumber(M)||!cJSON_IsNumber(L)||!cJSON_IsNumber(owner_id))
     {
         goto end;
     }
-    params[0] = T->valuedouble;
-    params[1] = M->valuedouble;
-    params[2] = L->valuedouble;
+    idealParams[0] = T->valuedouble;
+    idealParams[1] = M->valuedouble;
+    idealParams[2] = L->valuedouble;
+    ownershipId = owner_id->valuedouble;
     goto end;
 
 
     end:
     cJSON_Delete(response_json);
-    return params;
 }
-double * parseDayParams(char * response){
+void parseDayParams(char * response){
     const cJSON * day = NULL;
     const cJSON * wait=NULL;
     cJSON *response_json = cJSON_Parse(response);
@@ -63,5 +67,4 @@ double * parseDayParams(char * response){
 
     end:
     cJSON_Delete(response_json);
-    return dayWait;
 }

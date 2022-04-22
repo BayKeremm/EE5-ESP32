@@ -1,5 +1,5 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
-double * parseIdealParams(char*);
-double * parseDayParams(char*);
+void  parseIdealParams(char*);
+void  parseDayParams(char*);
 #endif
