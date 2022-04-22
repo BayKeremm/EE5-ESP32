@@ -14,10 +14,11 @@
 [X]13. Parse the API response in http_on_data_event 
 [X]14. Add TLS to the requests.
 [X]15. Add json web token for the API calls.
+[X]18. Get parameters from the server
+[X]19. create parser
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
 []17. Add critical plant parameters and intelligence
-[]18. Get parameters from the server
-[]19. create parser
+[]20. test the parser and global variables.
 
 // FINAL STEPS
 []*. Put all the components together and assure problem free operation.
@@ -25,7 +26,7 @@
 
 PHP REST API
 [X]1. put time parameter on the server --> done on the database
-[]2. Add photo functionality --> BLOB
+[NO]2. Add photo functionality --> BLOB
 
 ANDROID APP
 []1. Add the functionality to add the device to the logged in user.
