@@ -71,6 +71,7 @@ void http_POST_measurement_request(char * type, double value){
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the POST REQUEST");
     esp_http_client_cleanup(client);
+    return;
 }
 void http_GET_ideal_parameters(){
     char url[600] = IDEAL_URL; 
@@ -86,6 +87,7 @@ void http_GET_ideal_parameters(){
     esp_http_client_set_method(client, HTTP_METHOD_GET);
     if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the GET REQUEST");
     esp_http_client_cleanup(client);
+    return;
 }
 
 void  http_GET_day_parameter(){
@@ -101,4 +103,5 @@ void  http_GET_day_parameter(){
     esp_http_client_set_method(client, HTTP_METHOD_GET);
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
+    return;
 }

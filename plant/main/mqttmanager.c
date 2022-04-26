@@ -53,13 +53,13 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                     led_pwm_duty_update(new_val);
                 }
                 if(event->data[2] == 48){ // water bit 0
-                    gpio_set_level(GPIO_NUM_26,0);
+                    gpio_set_level(GPIO_NUM_25,0);
 
                 }else{ // water bit not 0
-                    gpio_set_level(GPIO_NUM_26,1);
+                    gpio_set_level(GPIO_NUM_25,1);
                 }
             }else{
-                gpio_set_level(GPIO_NUM_26,0);
+                gpio_set_level(GPIO_NUM_25,0);
                 led_off();
 
             }

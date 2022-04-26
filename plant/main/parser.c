@@ -58,14 +58,10 @@ void parseDayParams(char * response){
     wait = cJSON_GetObjectItem(response_json,"wait");
     if (!cJSON_IsNumber(day) || !cJSON_IsNumber(wait))
     {
-        printf("they are not numbers\n");
         goto end;
     }
-    printf("they are numbers\n");
     dayWait[0] = day->valuedouble;
     dayWait[1] = wait->valuedouble;
-    printf("day:%f wait:%f\n",dayWait[0],dayWait[1]);
-    printf("after print\n");
     goto end;
 
 
