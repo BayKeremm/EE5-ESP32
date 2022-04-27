@@ -71,7 +71,6 @@ void app_main(void)
 
     // get user data from the database and ideal parameters.
     http_GET_ideal_parameters();
-    http_POST_measurement_request(ENUM_LIGHT, 69.420);
 
     //set GPIO direction
     // gpio_set_level to turn on and off
@@ -87,11 +86,9 @@ void app_main(void)
 
 //when nothing is connected ADC reads 0.043030 V
 void task_temperature(void * param){ //36
-    int index;
-    int val;
-    float run_avg;
-    float temperature_voltage;
-    float temperature;
+    char counter=0;
+    int index,val;
+    float run_avg,temperature_voltage,temperature;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(10000);
@@ -100,6 +97,7 @@ void task_temperature(void * param){ //36
         // get reading
         val = adc1_get_raw(ADC1_CHANNEL_0);
         temperature_voltage = adc_get_voltage(val)/1000;
+        counter++;
         // check if it is reasonable
         //if(temperature_voltage > 3300 || temperature_voltage < 50)continue;
         //printf("temperature voltage %f\n",temperature_voltage);
@@ -116,15 +114,18 @@ void task_temperature(void * param){ //36
             printf("too hot\n");
 
         }
-        http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
+        if(counter==5){
+            http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
+            counter = 0;
+        }
 
     }
     vTaskDelete(NULL);
 }
 void task_moisture(void * param){//34
+    char counter=0;
     int val;
-    float run_avg;
-    float moisture_voltage;
+    float run_avg,moisture_voltage;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
     const TickType_t xFrequency = pdMS_TO_TICKS(10000);
@@ -133,6 +134,7 @@ void task_moisture(void * param){//34
         // get reading
         val = adc1_get_raw(ADC1_CHANNEL_6);
         moisture_voltage = adc_get_voltage(val)/1000;
+        counter++;
         // check if it is reasonable
         //if(moisture_voltage > 3300 || moisture_voltage<50)continue;
         //printf("moisture reading %f\n",moisture_voltage);
@@ -152,15 +154,19 @@ void task_moisture(void * param){//34
             //TODO:close valve
             gpio_set_level(GPIO_NUM_26,0);
         }
-        http_POST_measurement_request(ENUM_MOISTURE, run_avg);
+        if(counter=5){
+            http_POST_measurement_request(ENUM_MOISTURE, run_avg);
+            counter=0;
+        
+        }
     }
     vTaskDelete(NULL);
 }
 void task_light(void * param){//39
+    char hours_to_wait=0;
     char counter=0;
     int val;
-    float run_avg;
-    float light_voltage;
+    float run_avg,light_voltage;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
     struct timeval current_time;
@@ -187,7 +193,7 @@ void task_light(void * param){//39
             // get reading
             val = adc1_get_raw(ADC1_CHANNEL_3);
             light_voltage = adc_get_voltage(val);
-            
+            counter++; 
             // check if it is reasonable
             //if(light_voltage > 3300 || light_voltage < 50)continue;
 
@@ -209,7 +215,10 @@ void task_light(void * param){//39
                 gpio_set_level(GPIO_NUM_25,0);
             }
             // HTTP request to write the data to the database
-            http_POST_measurement_request(ENUM_LIGHT, run_avg);
+            if(counter==5){
+                http_POST_measurement_request(ENUM_LIGHT, run_avg);
+                counter=0;
+            }
 
 
         }
@@ -217,11 +226,11 @@ void task_light(void * param){//39
     
     }
     while(dayWait[0]==0){
-        if(counter==dayWait[1]){
+        if(hours_to_wait==dayWait[1]){
             goto start;
         }
         xTaskDelayUntil( &xLastWakeTime, frequency_hour );
-        counter++;
+        hours_to_wait++;
     }
 
     vTaskDelete(NULL);

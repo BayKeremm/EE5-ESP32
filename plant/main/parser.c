@@ -25,7 +25,7 @@ void parseIdealParams(char * response){
     T = cJSON_GetObjectItem(response_json,"idealTemperature");
     M = cJSON_GetObjectItem(response_json,"idealMoisture");
     L = cJSON_GetObjectItem(response_json,"idealLight");
-    owner_id = cJSON_GetObjectItem(response_json,"ownershipId");
+    owner_id = cJSON_GetObjectItem(response_json,"id");
     if (!cJSON_IsNumber(T) || !cJSON_IsNumber(M)||!cJSON_IsNumber(L)||!cJSON_IsNumber(owner_id))
     {
         goto end;
