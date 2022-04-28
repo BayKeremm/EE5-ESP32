@@ -17,11 +17,11 @@
 [X]18. Get parameters from the server
 [X]19. create parser
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
-[]17. Add critical plant parameters and intelligence
-[]20. test the parser and global variables.
+[X]17. Add critical plant parameters and intelligence
+[X]20. test the parser and global variables.
 
 // FINAL STEPS
-[]*. Put all the components together and assure problem free operation.
+[X]*. Put all the components together and assure problem free operation.
 []*. Refactor the code, search for efficient ways.
 
 PHP REST API
