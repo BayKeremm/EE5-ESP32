@@ -60,20 +60,18 @@ void app_main(void)
     wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
 
-    // wait for wifi and mqtt
+   // // wait for wifi and mqtt
 
-   while(wifi_connected == 0 || mqtt_config_finish == 0){
-       if(wifi_connected == 1)
-       MQTT_start(); // abort when not successfull
-       vTaskDelay(3000 / portTICK_PERIOD_MS); 
-       printf("waiting for wifi connection and mqtt config\n");
+    while(wifi_connected == 0 || mqtt_config_finish == 0){
+        if(wifi_connected == 1) MQTT_start(); // abort when not successfull
+            vTaskDelay(3000 / portTICK_PERIOD_MS); 
+            printf("waiting for wifi connection and mqtt config\n");
    }
 
     // get user data from the database and ideal parameters.
     http_GET_ideal_parameters();
 
     //set GPIO direction
-    // gpio_set_level to turn on and off
     ESP_ERROR_CHECK(gpio_reset_pin(GPIO_NUM_25)); // abort if not successful
     ESP_ERROR_CHECK(gpio_set_direction(GPIO_NUM_25, GPIO_MODE_OUTPUT)); // abort if not successful
     ESP_ERROR_CHECK(gpio_reset_pin(GPIO_NUM_26)); // abort if not successful
@@ -84,22 +82,21 @@ void app_main(void)
     if(xTaskCreate(task_light,"light_sensor",4096,NULL,3,NULL)!=pdPASS) abort();
 }
 
-//when nothing is connected ADC reads 0.043030 V
 void task_temperature(void * param){ //36
     char counter=0;
     int index,val;
     float run_avg,temperature_voltage,temperature;
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount ();
-    const TickType_t xFrequency = pdMS_TO_TICKS(10000);
+    const TickType_t xFrequency = pdMS_TO_TICKS(10000); // 10 seconds
     while(1){
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
         // get reading
         val = adc1_get_raw(ADC1_CHANNEL_0);
-        temperature_voltage = adc_get_voltage(val)/1000;
+        temperature_voltage = adc_get_voltage(val);
         counter++;
         // check if it is reasonable
-        //if(temperature_voltage > 3300 || temperature_voltage < 50)continue;
+        if(temperature_voltage > 3300 || temperature_voltage < 0)continue;
         //printf("temperature voltage %f\n",temperature_voltage);
 
         // convert reading to temperature
@@ -111,14 +108,12 @@ void task_temperature(void * param){ //36
         add_measurement(temperature_array,temperature_voltage); 
         run_avg = get_array_avg(temp_array); 
         if(run_avg > idealParams[0]){
-            printf("too hot\n");
-
+            esp_mqtt_client_publish(client,"/EE5iot15/warnings","environment too hot",0,1,1);
         }
-        if(counter==5){
+        if(counter==12){
             http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
             counter = 0;
         }
-
     }
     vTaskDelete(NULL);
 }
@@ -133,10 +128,10 @@ void task_moisture(void * param){//34
         xTaskDelayUntil( &xLastWakeTime, xFrequency );
         // get reading
         val = adc1_get_raw(ADC1_CHANNEL_6);
-        moisture_voltage = adc_get_voltage(val)/1000;
+        moisture_voltage = adc_get_voltage(val);
         counter++;
         // check if it is reasonable
-        //if(moisture_voltage > 3300 || moisture_voltage<50)continue;
+        if(moisture_voltage > 3300 || moisture_voltage<0)continue;
         //printf("moisture reading %f\n",moisture_voltage);
         
         // add to the moisture array
@@ -147,14 +142,11 @@ void task_moisture(void * param){//34
         //compare to the ideal value 
         if(run_avg > idealParams[1]){
             gpio_set_level(GPIO_NUM_26,1);
-            printf("open valve\n");
-        
         }
         else{
-            //TODO:close valve
             gpio_set_level(GPIO_NUM_26,0);
         }
-        if(counter=5){
+        if(counter==12){
             http_POST_measurement_request(ENUM_MOISTURE, run_avg);
             counter=0;
         
@@ -174,7 +166,7 @@ void task_light(void * param){//39
     gettimeofday(&current_time, NULL);
     
     const TickType_t xFrequency = pdMS_TO_TICKS(10000);
-    const TickType_t frequency_hour = pdMS_TO_TICKS(3600000);// measurement frequency
+    const TickType_t frequency_hour = pdMS_TO_TICKS(3600000); // hour
 
     // CUSTOM LOOP
     start:  
@@ -193,11 +185,10 @@ void task_light(void * param){//39
             // get reading
             val = adc1_get_raw(ADC1_CHANNEL_3);
             light_voltage = adc_get_voltage(val);
+            //printf("light reading %f\n",light_voltage);
             counter++; 
             // check if it is reasonable
-            //if(light_voltage > 3300 || light_voltage < 50)continue;
-
-            light_voltage = light_voltage/3300;
+            if(light_voltage > 3300 || light_voltage < 0)continue;
 
             // add to the array
             add_measurement(light_array,light_voltage); 
@@ -207,15 +198,13 @@ void task_light(void * param){//39
             
             // compare with the ideal value comparison in voltage 
             if(run_avg > idealParams[2]){
-                //TODO: open lights 
                 gpio_set_level(GPIO_NUM_25,1);
             
             }else{
-                //TODO: close lights 
                 gpio_set_level(GPIO_NUM_25,0);
             }
             // HTTP request to write the data to the database
-            if(counter==5){
+            if(counter==12){
                 http_POST_measurement_request(ENUM_LIGHT, run_avg);
                 counter=0;
             }
@@ -253,34 +242,3 @@ float get_array_avg(float * array){
     }
     return sum / RUN_AVG_LENGTH;
 }
-
-    //while(1){
-    //    xTaskDelayUntil( &xLastWakeTime, xFrequency );
-    //       
-    //        // get reading
-    //        val = adc1_get_raw(ADC1_CHANNEL_3);
-    //        light_voltage = adc_get_voltage(val)/1000;
-    //        
-    //        // check if it is reasonable
-    //        //if(light_voltage > 3300 || light_voltage < 50)continue;
-
-    //        //printf("light reading %f\n",light_voltage);
-
-    //        // add to the array
-    //        add_measurement(light_array,light_voltage); 
-    //        
-    //        // get the running avg
-    //        run_avg = get_array_avg(light_array); 
-    //        
-    //        // compare with the ideal value comparison in voltage 
-    //        if(run_avg > idealParams[2]){
-    //            gpio_set_level(GPIO_NUM_25,1);
-    //        
-    //        }else{
-    //            //TODO: close lights 
-    //            gpio_set_level(GPIO_NUM_25,0);
-    //        }
-    //        // HTTP request to write the data to the database
-    //        http_POST_measurement_request("Light", run_avg);
-    //
-    //}
