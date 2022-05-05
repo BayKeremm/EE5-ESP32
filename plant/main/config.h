@@ -59,6 +59,6 @@
 #define WIFI_FAIL_BIT BIT1
 #define ESPTOUCH_DONE_BIT BIT2
 
-#define BROKER_URI "mqtt://35.157.221.58:1883"
+#define BROKER_URI "mqtt://broker.hivemq.com:1883"
 
 #endif  //CONFIG
