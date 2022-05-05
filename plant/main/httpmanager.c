@@ -47,7 +47,6 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
 
 
 void http_POST_measurement_request(char * type, double value){
-    printf("%f\n",ownershipId);
     char value_s[50];
     char ownerId[50];
     snprintf(value_s, 50, "%f", value);

@@ -36,7 +36,11 @@
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
-
+// MQTT TOPICS
+#define WARNINGS "/EE5iot15/warnings/1"
+#define COMMANDS "/EE5iot15/commands/1"
+#define SLIDER "/EE5iot15/commands/slider/1"
+// URLS
 #define DAY_URL "https://a21iot15.studev.groept.be/index.php/api/day"
 #define IDEAL_URL "https://a21iot15.studev.groept.be/index.php/api/getIdealParams/"
 #define INSERT_URL "https://a21iot15.studev.groept.be/index.php/api/put/" 
@@ -55,6 +59,6 @@
 #define WIFI_FAIL_BIT BIT1
 #define ESPTOUCH_DONE_BIT BIT2
 
-#define BROKER_URI "mqtt://52.59.17.149:1883"
+#define BROKER_URI "mqtt://35.157.221.58:1883"
 
 #endif  //CONFIG

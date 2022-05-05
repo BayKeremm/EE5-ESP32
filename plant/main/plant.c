@@ -55,12 +55,13 @@ void app_main(void)
 
      //init led pwm
     led_pwm_init(); // ESP_ERROR_CHECK exits with abort() in case of error.
+    
 
     // init wifi and connect 
-    wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
+     wifi_init_sta(); // ESP_ERROR_CHECK exits with abort() in case of error.
 
 
-   // // wait for wifi and mqtt
+    // wait for wifi and mqtt
 
     while(wifi_connected == 0 || mqtt_config_finish == 0){
         if(wifi_connected == 1) MQTT_start(); // abort when not successfull
@@ -100,18 +101,22 @@ void task_temperature(void * param){ //36
         //printf("temperature voltage %f\n",temperature_voltage);
 
         // convert reading to temperature
-        index = temperature_voltage*10-1;
+        index = temperature_voltage/100;
         if(index > 33)index=33;
         if(index<0)index=0;
-        temperature = temp_array[index];
+        temperature = temp_array[index] - 3;
+        //printf("temperature %f\n",temperature);
 
-        add_measurement(temperature_array,temperature_voltage); 
-        run_avg = get_array_avg(temp_array); 
-        if(run_avg > idealParams[0]){
-            esp_mqtt_client_publish(client,"/EE5iot15/warnings","environment too hot",0,1,1);
-        }
-        if(counter==12){
+        add_measurement(temperature_array,temperature); 
+        run_avg = get_array_avg(temperature_array); 
+       if(counter==12){
             http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
+             if(run_avg > idealParams[0]){
+                 esp_mqtt_client_publish(client,WARNINGS,"environment too hot",0,1,1);
+             }
+             if(run_avg < idealParams[0]){
+                 esp_mqtt_client_publish(client,WARNINGS,"environment too cold",0,1,1);
+             }
             counter = 0;
         }
     }
@@ -135,7 +140,7 @@ void task_moisture(void * param){//34
         //printf("moisture reading %f\n",moisture_voltage);
         
         // add to the moisture array
-        add_measurement(moisture_array,moisture_voltage); 
+        add_measurement(moisture_array,100 - moisture_voltage/31); 
 
         // get the running avg
         run_avg = get_array_avg(moisture_array); 
@@ -185,19 +190,20 @@ void task_light(void * param){//39
             // get reading
             val = adc1_get_raw(ADC1_CHANNEL_3);
             light_voltage = adc_get_voltage(val);
-            //printf("light reading %f\n",light_voltage);
+//            printf("light reading %f\n",light_voltage);
             counter++; 
             // check if it is reasonable
             if(light_voltage > 3300 || light_voltage < 0)continue;
 
             // add to the array
-            add_measurement(light_array,light_voltage); 
+            add_measurement(light_array,100-light_voltage/31); 
             
             // get the running avg
             run_avg = get_array_avg(light_array); 
+            //printf("light avg %f\n",run_avg);
             
             // compare with the ideal value comparison in voltage 
-            if(run_avg > idealParams[2]){
+            if(run_avg < idealParams[2]){
                 gpio_set_level(GPIO_NUM_25,1);
             
             }else{

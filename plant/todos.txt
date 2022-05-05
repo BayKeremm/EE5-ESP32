@@ -19,6 +19,7 @@
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
 [X]17. Add critical plant parameters and intelligence
 [X]20. test the parser and global variables.
+[] 21. Add unique MQTT topics for devices.
 
 // FINAL STEPS
 [X]*. Put all the components together and assure problem free operation.
@@ -27,9 +28,11 @@
 PHP REST API
 [X]1. put time parameter on the server --> done on the database
 [NO]2. Add photo functionality --> BLOB
+[X] 3. Write a python script to test the api.
+[] 4. Adding photo as directory
 
 ANDROID APP
-[]1. Add the functionality to add the device to the logged in user.
+[X]1. Add the functionality to add the device to the logged in user.
 
 
 
