@@ -39,7 +39,6 @@
 // MQTT TOPICS
 #define WARNINGS "/EE5iot15/warnings/1"
 #define COMMANDS "/EE5iot15/commands/1"
-#define SLIDER "/EE5iot15/commands/slider/1"
 // URLS
 #define DAY_URL "https://a21iot15.studev.groept.be/index.php/api/day"
 #define IDEAL_URL "https://a21iot15.studev.groept.be/index.php/api/getIdealParams/"

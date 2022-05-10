@@ -27,8 +27,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         msg_id = esp_mqtt_client_subscribe(client, WARNINGS, 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-        msg_id = esp_mqtt_client_subscribe(client, SLIDER, 0);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         mqtt_config_finish = 1;
 
         break;
