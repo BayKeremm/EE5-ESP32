@@ -19,7 +19,7 @@
 []16.  Think about edge cases for wifi, measurements, ADC values, etc; 
 [X]17. Add critical plant parameters and intelligence
 [X]20. test the parser and global variables.
-[] 21. Add unique MQTT topics for devices.
+[X] 21. Add unique MQTT topics for devices.
 
 // FINAL STEPS
 [X]*. Put all the components together and assure problem free operation.

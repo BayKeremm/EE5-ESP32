@@ -146,11 +146,13 @@ void task_moisture(void * param){//34
             http_POST_measurement_request(ENUM_MOISTURE, run_avg);
             counter=0;
             //compare to the ideal value 
-            if(run_avg > idealParams[1]){
+            if(run_avg < idealParams[1]){
+                //printf("valve on\n");
                 gpio_set_level(GPIO_NUM_26,1);
             }
             else{
                 gpio_set_level(GPIO_NUM_26,0);
+                //printf("valve off\n");
             }
         
         }
@@ -200,17 +202,18 @@ void task_light(void * param){//39
             run_avg = get_array_avg(light_array); 
             //printf("light avg %f\n",run_avg);
             
+            // compare with the ideal value comparison in voltage 
+            if(run_avg < idealParams[2]){
+                gpio_set_level(GPIO_NUM_25,1);
+                
+            }else{
+                gpio_set_level(GPIO_NUM_25,0);
+            }
+            
             // HTTP request to write the data to the database
             if(counter==12){
                 http_POST_measurement_request(ENUM_LIGHT, run_avg);
                 counter=0;
-                // compare with the ideal value comparison in voltage 
-                if(run_avg < idealParams[2]){
-                    gpio_set_level(GPIO_NUM_25,1);
-                
-                }else{
-                    gpio_set_level(GPIO_NUM_25,0);
-                }
             }
 
 
