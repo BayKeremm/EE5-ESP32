@@ -3,7 +3,7 @@
 
 #define LEDC_TIMER              LEDC_TIMER_0
 #define LEDC_MODE               LEDC_LOW_SPEED_MODE
-#define LEDC_OUTPUT_IO          (21) // Define the output GPIO
+#define LEDC_OUTPUT_IO          (25) // Define the output GPIO
 #define LEDC_CHANNEL            LEDC_CHANNEL_0
 #define LEDC_DUTY_RES           LEDC_TIMER_13_BIT // Set duty resolution to 13 bits
 #define LEDC_DUTY               (4095) // Set duty to 50%. ((2 ** 13) - 1) * 50% = 4095
@@ -11,11 +11,6 @@
 
 void led_off(void){
     ledc_stop(LEDC_MODE, LEDC_CHANNEL, 0);
-
-}
-void led_pwm_duty_update(uint32_t duty){
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE,LEDC_CHANNEL, duty));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
 
 }
 void led_pwm_init(void){
@@ -38,9 +33,13 @@ void led_pwm_init(void){
             .hpoint         = 0
         };
     ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, LEDC_DUTY));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
     
                             
 }
 
+void led_pwm_duty_update(uint32_t duty){
+    led_pwm_init();
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE,LEDC_CHANNEL, duty));
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, LEDC_CHANNEL));
+
+}

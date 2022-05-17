@@ -4,6 +4,7 @@
 
 #define MAX_HTTP_RECV_BUFFER 512
 #define MAX_HTTP_OUTPUT_BUFFER 2048
+extern char wifi_connected;
 static const char *TAG = "HTTP_CLIENT";
 extern const char root_cert_pem_start[] asm("_binary_root_cert_pem_start");
 extern double ownershipId;
@@ -11,19 +12,19 @@ extern double ownershipId;
 esp_err_t _http_event_handler(esp_http_client_event_t * evt){
     switch(evt->event_id) {
         case HTTP_EVENT_ERROR:
-            ESP_LOGD(TAG, "HTTP_EVENT_ERROR");
+            ESP_LOGI(TAG, "HTTP_EVENT_ERROR");
             break;
         case HTTP_EVENT_ON_CONNECTED:
-            ESP_LOGD(TAG, "HTTP_EVENT_ON_CONNECTED");
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_CONNECTED");
             break;
         case HTTP_EVENT_HEADER_SENT:
-            ESP_LOGD(TAG, "HTTP_EVENT_HEADER_SENT");
+            ESP_LOGI(TAG, "HTTP_EVENT_HEADER_SENT");
             break;
         case HTTP_EVENT_ON_HEADER:
-            ESP_LOGD(TAG, "HTTP_EVENT_ON_HEADER, key=%s, value=%s", evt->header_key, evt->header_value);
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_HEADER, key=%s, value=%s", evt->header_key, evt->header_value);
             break;
         case HTTP_EVENT_ON_DATA:
-            ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
             char * s = evt->data;
             if (strstr(s, "day") != NULL){
                 parseDayParams(s);
@@ -33,13 +34,13 @@ esp_err_t _http_event_handler(esp_http_client_event_t * evt){
             }
             break;
         case HTTP_EVENT_ON_FINISH:
-            ESP_LOGD(TAG, "HTTP_EVENT_ON_FINISH");
+            ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
             break;
         case HTTP_EVENT_DISCONNECTED:
-            ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED");
+            ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
             break;
         case HTTP_EVENT_REDIRECT:
-            ESP_LOGD(TAG, "HTTP_EVENT_REDIRECT");
+            ESP_LOGI(TAG, "HTTP_EVENT_REDIRECT");
             break;
     }
     return ESP_OK;
@@ -69,7 +70,11 @@ void http_POST_measurement_request(char * type, double value){
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
-    if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the POST REQUEST");
+    if(esp_http_client_perform(client)==ESP_FAIL){
+        ESP_LOGI(TAG, "Could not perform the POST REQUEST");
+    }else{
+        wifi_connected = 1;
+    } 
     esp_http_client_cleanup(client);
     return;
 }
@@ -85,7 +90,11 @@ void http_GET_ideal_parameters(){
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);
-    if(esp_http_client_perform(client)==ESP_FAIL) ESP_LOGI(TAG, "Could not perform the GET REQUEST");
+    if(esp_http_client_perform(client)==ESP_FAIL){
+        ESP_LOGI(TAG, "Could not perform the GET REQUEST");
+    }else{
+        wifi_connected = 1;
+    }
     esp_http_client_cleanup(client);
     return;
 }
@@ -101,7 +110,11 @@ void  http_GET_day_parameter(){
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);
-    esp_http_client_perform(client);
+    if(esp_http_client_perform(client)==ESP_FAIL){
+        ESP_LOGI(TAG, "Could not perform the GET REQUEST");
+    }else{
+        wifi_connected = 1;
+    }
     esp_http_client_cleanup(client);
     return;
 }

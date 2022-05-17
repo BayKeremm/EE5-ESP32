@@ -9,6 +9,7 @@
 extern esp_mqtt_client_handle_t client;
 extern char wifi_connected;
 extern char mqtt_config_finish;
+char automatic;
 double idealParams[3];
 double dayWait[2];
 double ownershipId;
@@ -35,12 +36,14 @@ void task_light(void * param);
  * moisture A2      34
  * LDR      A3      39
  * NTC      A4      36
- * */
+ * 
+ */
 
 
 
 void app_main(void)
 {
+    automatic = 1;
     // init memory esp32
 	esp_err_t ret = nvs_flash_init();
 	if(ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)	{
@@ -107,14 +110,16 @@ void task_temperature(void * param){ //36
 
         add_measurement(temperature_array,temperature); 
         run_avg = get_array_avg(temperature_array); 
+        if(automatic==1){
+            if(run_avg > idealParams[0]){
+                esp_mqtt_client_publish(client,WARNINGS,"environment too hot",0,1,1);
+            }
+            if(run_avg < idealParams[0]){
+                esp_mqtt_client_publish(client,WARNINGS,"environment too cold",0,1,1);
+            }
+        }
        if(counter==12){
-            http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
-             if(run_avg > idealParams[0]){
-                 esp_mqtt_client_publish(client,WARNINGS,"environment too hot",0,1,1);
-             }
-             if(run_avg < idealParams[0]){
-                 esp_mqtt_client_publish(client,WARNINGS,"environment too cold",0,1,1);
-             }
+            if(wifi_connected==1)http_POST_measurement_request(ENUM_TEMPERATURE, run_avg);
             counter = 0;
         }
     }
@@ -139,12 +144,11 @@ void task_moisture(void * param){//34
         
         // add to the moisture array
         add_measurement(moisture_array,100 - moisture_voltage/31); 
+    
 
         // get the running avg
         run_avg = get_array_avg(moisture_array); 
-        if(counter==12){
-            http_POST_measurement_request(ENUM_MOISTURE, run_avg);
-            counter=0;
+        if(automatic == 1){
             //compare to the ideal value 
             if(run_avg < idealParams[1]){
                 //printf("valve on\n");
@@ -154,7 +158,10 @@ void task_moisture(void * param){//34
                 gpio_set_level(GPIO_NUM_26,0);
                 //printf("valve off\n");
             }
-        
+        }
+        if(counter==12){
+            if(wifi_connected==1)http_POST_measurement_request(ENUM_MOISTURE, run_avg);
+            counter=0;
         }
     }
     vTaskDelete(NULL);
@@ -203,16 +210,21 @@ void task_light(void * param){//39
             //printf("light avg %f\n",run_avg);
             
             // compare with the ideal value comparison in voltage 
-            if(run_avg < idealParams[2]){
-                gpio_set_level(GPIO_NUM_25,1);
-                
-            }else{
-                gpio_set_level(GPIO_NUM_25,0);
+            if(automatic == 1){
+                if(run_avg < idealParams[2]){
+                    printf("led on \n");
+                    led_pwm_duty_update(8190);
+                    
+                }else{
+                    printf("led off \n");
+                    led_pwm_duty_update(0);
+                }
             }
+            printf("%d is the automatic \n",automatic);
             
             // HTTP request to write the data to the database
             if(counter==12){
-                http_POST_measurement_request(ENUM_LIGHT, run_avg);
+                if(wifi_connected==1)http_POST_measurement_request(ENUM_LIGHT, run_avg);
                 counter=0;
             }
 

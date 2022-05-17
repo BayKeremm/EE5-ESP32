@@ -5,18 +5,20 @@
 static const char *TAG = "MQTT_ESP32";
 esp_mqtt_client_handle_t client; 
 char mqtt_config_finish;
+extern char automatic;
+extern char wifi_connected;
 
 
 static void log_error_if_nonzero(const char *message, int error_code)
 {
     if (error_code != 0) {
-        ESP_LOGE(TAG, "Last error %s: 0x%x", message, error_code);
+        ESP_LOGI(TAG, "Last error %s: 0x%x", message, error_code);
     }
 }
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
-    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    ESP_LOGI(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     esp_mqtt_event_handle_t event = event_data;
     int msg_id;
     client = event->client;
@@ -25,13 +27,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         msg_id = esp_mqtt_client_subscribe(client, COMMANDS, 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-        msg_id = esp_mqtt_client_subscribe(client, WARNINGS, 0);
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         mqtt_config_finish = 1;
-
+        wifi_connected = 1;
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+        wifi_connected = 0;
         break;
 
     case MQTT_EVENT_SUBSCRIBED:
@@ -45,25 +46,33 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-        if(strcmp(event->topic,"/EE5iot15/commands/")){
-            if(event->data[0] == 49){ // MANUAL take commands from the user
+        if(strcmp(event->topic,"/EE5iot15/commands/1")){
+            if(event->data[0]==48){ //automatic
+                automatic = 1;
+                led_off();
+                gpio_set_level(GPIO_NUM_26,0);
+            }
+            else{ // MANUAL take commands from the user
+                automatic = 0;
                 if(event->data[1]==49){
-                    int sum = event->data[3]+event->data[4]; 
-                    int new_val =383*sum-36662;
+                    int sum = (event->data[3]-48)*10+event->data[4]-48; 
+                    int new_val =81.9*sum;
+                    printf("%d duty value\n",new_val);
                     led_pwm_duty_update(new_val);
                 }
-                if(event->data[2] == 48){ // water bit 0
-                    gpio_set_level(GPIO_NUM_26,0);
-
-                }else{ // water bit not 0
-                    gpio_set_level(GPIO_NUM_26,1);
+                if(event->data[1]==48){
+                    led_off();
                 }
-            }else{
-                gpio_set_level(GPIO_NUM_25,0);
-                led_off();
+                
+                if(event->data[2] == 49){ // water bit 0
+                    gpio_set_level(GPIO_NUM_26,1);
 
+                }if(event->data[2]==48){ // water bit not 0
+                    gpio_set_level(GPIO_NUM_26,0);
+                }
             }
         }
+        printf("%d is the automatic \n",automatic);
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
