@@ -111,11 +111,14 @@ void task_temperature(void * param){ //36
         add_measurement(temperature_array,temperature); 
         run_avg = get_array_avg(temperature_array); 
         if(automatic==1){
-            if(run_avg > idealParams[0]){
-                esp_mqtt_client_publish(client,WARNINGS,"environment too hot",0,1,1);
+            if(run_avg > idealParams[0]+3){
+                esp_mqtt_client_publish(client,WARNINGS,"Environment too hot",0,1,1);
             }
-            if(run_avg < idealParams[0]){
-                esp_mqtt_client_publish(client,WARNINGS,"environment too cold",0,1,1);
+            else if(run_avg < idealParams[0]-3){
+                esp_mqtt_client_publish(client,WARNINGS,"Environment too cold",0,1,1);
+            }
+            else{
+                esp_mqtt_client_publish(client,WARNINGS,"Temperature is ideal",0,1,1);
             }
         }
        if(counter==12){

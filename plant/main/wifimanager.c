@@ -6,6 +6,7 @@ static EventGroupHandle_t s_wifi_event_group;
 static const char * TAG = "wifi station";
 static int s_retry_num = 0;
 char wifi_connected = 0;
+static int backOff = 1000 / portTICK_PERIOD_MS;
 
 
 
@@ -16,10 +17,12 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         if(xTaskCreate(smartconfig_task, "smartconfig_task", 4096, NULL, 3, NULL)!= pdPASS)abort();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        if(s_retry_num < 5){
+        if(s_retry_num < 10){
+            ESP_LOGI(TAG, "retry to connect to the AP");
 			esp_wifi_connect();
             s_retry_num++;
-            ESP_LOGI(TAG, "retry to connect to the AP");
+            vTaskDelay(backOff);
+            backOff *= 2;
 		}else{
 			ESP_LOGI(TAG,"connect to the AP fail");
 			xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
@@ -80,12 +83,13 @@ static void smartconfig_task(void * parm)
         uxBits = xEventGroupWaitBits(s_wifi_event_group, WIFI_CONNECTED_BIT | ESPTOUCH_DONE_BIT| WIFI_FAIL_BIT, true, false, portMAX_DELAY);
         if(uxBits & WIFI_CONNECTED_BIT) {
             ESP_LOGI(TAG, "WiFi Connected to ap");
+            s_retry_num = 0;
+            backOff = 1000 / portTICK_PERIOD_MS;
         }
         if(uxBits & ESPTOUCH_DONE_BIT) {
             ESP_LOGI(TAG, "smartconfig over");
             esp_smartconfig_stop();
             wifi_connected = 1;
-            vTaskDelete(NULL);
         }if(uxBits & WIFI_FAIL_BIT){
 			ESP_LOGI(TAG, "smartconfig over failed to connect to wifi");
 			esp_smartconfig_stop();
