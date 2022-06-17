@@ -20,3 +20,4 @@ Air -> 2.5V output.
 
 
 
+![flow_chart](https://user-images.githubusercontent.com/82160210/174259056-ed6fb63c-0c60-48f1-9c7e-b34064213166.png)
